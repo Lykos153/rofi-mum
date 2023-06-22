@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# (mumctl channel list | grep -v '-' | rofi -dmenu -i -normal-window | sed -r 's/^( )*//g' | xargs -I name mumctl channel connect "name") && notify-send "mumble: Switched to $(mumctl status | grep -Po 'Currently in \K(.*)(?= with)')"
+
+trim() {
+    local var="$*"
+    # remove leading whitespace characters
+    var="${var#"${var%%[![:space:]]*}"}"
+    # remove trailing whitespace characters
+    var="${var%"${var##*[![:space:]]}"}"
+    printf '%s' "$var"
+}
+
+print_status() {
+  room="$(mumctl status | grep -Po 'Currently in \K(.*)(?= with)')"
+  server="$(mumctl status | grep -Po 'Connected to \K(.*)(?= as)')"
+  user="$(mumctl status | grep -Po 'Connected to (.*) as \K(.*)')"
+  muted="$(mumctl status | tail -n+4 | grep -Po 'silv.io \K(M?)')"
+  deaf="$(mumctl status | tail -n+4 | grep -Po 'silv.io M?\K(D?)')"
+
+  output="$(mumctl channel list)"
+  if [ -n "$muted" ]; then
+    output="$(printf "$output\n## unmute")"
+  else
+    output="$(printf "$output\n## mute")"
+  fi
+
+  if [ -n "$deaf" ]; then
+    output="$(printf "$output\n## undeafen")"
+  else
+    output="$(printf "$output\n## deafen")"
+  fi
+
+  output="$(printf "$output\n## disconnect")"
+
+
+  lines="$(echo "$output" | wc -l)"
+  printf "\0theme\x1flistview {lines: $lines;}\n"
+  echo "$output" #| sed -r 's/^( )*- .*/&\x00nonselectable\x1finfo\x1fuser/'
+}
+
+sel="$@"
+
+if [ -z "$ROFI_RETV" ]; then
+  exec rofi -show mum -modes mum:$0
+fi
+
+
+echo $sel >&2
+case "$sel" in
+  "")
+    if [ "$ROFI_RETV" -ne 0 ]; then
+      exit 0
+    fi
+    ;;
+  "##"*)
+    action="$(echo "$sel" | sed -r 's/^## //g')"
+    mumctl "$action" && notify-send "mumble: $action success" || notify-send "mumble: $action failure"
+    ;;
+  *)
+    mumctl channel connect "$(trim "$sel")" &>/dev/null && notify-send "mumble: Switched to $sel" || notify-send "mumble: Error switching to $sel"
+    ;;
+esac
+if [ "$ROFI_RETV" -ne 0 ]; then
+  sleep 0.1
+fi
+print_status
