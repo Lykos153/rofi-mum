@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# config="${XDG_CONFIG_HOME:-$HOME/.config}/mum-rofi/mum-rofi.toml"
+
 trim() {
     local var="$*"
     # remove leading whitespace characters
@@ -37,28 +39,68 @@ print_status() {
   echo "$output" #| sed -r 's/^( )*- .*/&\x00nonselectable\x1finfo\x1fuser/'
 }
 
-sel="$*"
+connection_menu() {
+  case "$sel" in
+    "")
+      if [ "$ROFI_RETV" -eq 0 ]; then
+        mumctl server list | grep -Po '(.*)(?=  [[0-9]+/[0-9]+])'
+      fi
+      exit 0
+      ;;
+    "##"*)
+      action="$(echo "$sel" | sed -r 's/^## //g')"
+      (mumctl "$action" && notify-send "mumble: $action success") || notify-send "mumble: $action failure"
+      ;;
+    *)
+      mumctl connect "$sel" >/dev/null
+      sleep 0.1
+      print_status
+      ;;
+  esac
+}
 
+server_menu() {
+  case "$sel" in
+    "")
+      if [ "$ROFI_RETV" -ne 0 ]; then
+        exit 0
+      fi
+      ;;
+    "##"*)
+      action="$(echo "$sel" | sed -r 's/^## //g')"
+      (mumctl "$action" && notify-send "mumble: $action success") || notify-send "mumble: $action failure"
+      ;;
+    *)
+      (mumctl channel connect "$(trim "$sel")" &>/dev/null && notify-send "mumble: Switched to $sel") || notify-send "mumble: Error switching to $sel"
+      ;;
+  esac
+  if [ "$ROFI_RETV" -ne 0 ]; then
+    sleep 0.1
+  fi
+  print_status
+}
+
+
+
+## MAIN
 if [ -z "${ROFI_RETV+x}" ]; then
   exec rofi -show mum -modes "mum:$0"
 fi
+sel="$*"
 
-
-case "$sel" in
-  "")
-    if [ "$ROFI_RETV" -ne 0 ]; then
-      exit 0
-    fi
-    ;;
-  "##"*)
-    action="$(echo "$sel" | sed -r 's/^## //g')"
-    (mumctl "$action" && notify-send "mumble: $action success") || notify-send "mumble: $action failure"
-    ;;
+state="$(mumctl status)"
+case "$state" in
+  "error: Not connected to a server")
+    connection_menu
+  ;;
+  "error: Unable to connect to mumd")
+    echo "mumd not running"
+  ;;
+  "Connected"*)
+    server_menu
+  ;;
   *)
-    (mumctl channel connect "$(trim "$sel")" &>/dev/null && notify-send "mumble: Switched to $sel") || notify-send "mumble: Error switching to $sel"
-    ;;
+    echo "Unknown error"
+    echo "$state"
+  ;;
 esac
-if [ "$ROFI_RETV" -ne 0 ]; then
-  sleep 0.1
-fi
-print_status
