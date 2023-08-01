@@ -17,7 +17,7 @@ sort_members() {
   do
     case "$line" in
       "    -"*)
-        buf="$(echo "${buf}\n${line}")"
+        buf="${buf}\n${line}"
       ;;
       *)
         echo "$buf" | sed '/^$/d' | sort
