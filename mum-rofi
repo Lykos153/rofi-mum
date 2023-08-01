@@ -12,19 +12,16 @@ trim() {
 }
 
 sort_members() {
-  local buf
+  local buf=""
   while IFS= read -r line
   do
-    case "$line" in
-      "    -"*)
+    if echo "$line" | grep -P '^ +-' &>/dev/null; then
         buf="${buf}\n${line}"
-      ;;
-      *)
-        echo "$buf" | sed '/^$/d' | sort
+    else
+        echo -e "$buf" | sort
         buf=""
         echo "$line"
-      ;;
-    esac
+    fi
   done
 }
 
