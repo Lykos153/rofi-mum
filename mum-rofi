@@ -11,6 +11,23 @@ trim() {
     printf '%s' "$var"
 }
 
+sort_members() {
+  local buf
+  while IFS= read -r line
+  do
+    case "$line" in
+      "    -"*)
+        buf="$(echo "${buf}\n${line}")"
+      ;;
+      *)
+        echo "$buf" | sed '/^$/d' | sort
+        buf=""
+        echo "$line"
+      ;;
+    esac
+  done
+}
+
 print_status() {
   # room="$(mumctl status | grep -Po 'Currently in \K(.*)(?= with)')"
   # server="$(mumctl status | grep -Po 'Connected to \K(.*)(?= as)')"
@@ -18,7 +35,7 @@ print_status() {
   muted="$(mumctl status | tail -n+4 | grep -Po 'silv.io \K(M?)')"
   deaf="$(mumctl status | tail -n+4 | grep -Po 'silv.io M?\K(D?)')"
 
-  output="$(mumctl channel list)"
+  output="$(mumctl channel list | sort_members)"
   if [ -n "$muted" ]; then
     output="$(echo -e "$output\n## unmute")"
   else
