@@ -31,9 +31,9 @@ sort_members() {
 print_status() {
   # room="$(mumctl status | grep -Po 'Currently in \K(.*)(?= with)')"
   # server="$(mumctl status | grep -Po 'Connected to \K(.*)(?= as)')"
-  # user="$(mumctl status | grep -Po 'Connected to (.*) as \K(.*)')"
-  muted="$(mumctl status | tail -n+4 | grep -Po 'silv.io \K(M?)')"
-  deaf="$(mumctl status | tail -n+4 | grep -Po 'silv.io M?\K(D?)')"
+  user="$(mumctl status | grep -Po 'Connected to (.*) as \K(.*)')"
+  muted="$(mumctl status | tail -n+4 | grep -Po "$user"' \K(M?)')"
+  deaf="$(mumctl status | tail -n+4 | grep -Po "$user"' M?\K(D?)')"
 
   output="$(mumctl channel list | sort_members)"
   if [ -n "$muted" ]; then
