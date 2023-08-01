@@ -1,0 +1,11 @@
+---
+repos:
+  # In order for validate-linter-versions.sh to work, rev must always be
+  # in the line below repo.
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.9.0
+    hooks:
+      - id: shellcheck
+        args:
+          - -x
+...
