@@ -8,7 +8,7 @@
     recipe =  { writeShellApplication, pkgs }:
 
       writeShellApplication rec {
-        name = "mum-rofi";
+        name = "rofi-mum";
 
         runtimeInputs = [
           pkgs.nur.repos.lykos153.mum
@@ -18,7 +18,7 @@
           pkgs.rofi
         ];
 
-        text = builtins.readFile ./mum-rofi;
+        text = builtins.readFile ./rofi-mum;
       };
   in
   flake-utils.lib.eachDefaultSystem (system: let

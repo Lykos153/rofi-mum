@@ -7,4 +7,4 @@
   sed
 ```
 # Usage (Nix)
-`nix run github:lykos153/mum-rofi`
+`nix run github:lykos153/rofi-mum`

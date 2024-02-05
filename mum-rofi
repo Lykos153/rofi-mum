@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# config="${XDG_CONFIG_HOME:-$HOME/.config}/mum-rofi/mum-rofi.toml"
+# config="${XDG_CONFIG_HOME:-$HOME/.config}/rofi-mum/rofi-mum.toml"
 
 trim() {
     local var="$*"
