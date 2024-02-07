@@ -27,6 +27,6 @@
         overlays = [ nur.overlay ];
     };
   in {
-    defaultPackage = pkgs.callPackage recipe {};
+    packages.default = pkgs.callPackage recipe {};
   });
 }
