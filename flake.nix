@@ -25,7 +25,7 @@
           ];
         };
         overlayAttrs = {
-          inherit (config.packages) default;
+          inherit (config.packages) rofi-mum;
         };
         packages = rec {
           default = rofi-mum;
