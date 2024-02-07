@@ -8,4 +8,12 @@ repos:
       - id: shellcheck
         args:
           - -x
+  - repo: local
+    hooks:
+      - id: nix-fmt
+        name: nix-fmt
+        language: system
+        entry: nix fmt
+        files: '\.nix$'
+
 ...
