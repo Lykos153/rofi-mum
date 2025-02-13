@@ -52,18 +52,37 @@
         "type": "github"
       }
     },
-    "nur": {
+    "nixpkgs_2": {
       "locked": {
-        "lastModified": 1707306252,
-        "narHash": "sha256-uyOzOyFCnAiawlv1F4uy7Kk3m8zJGwVY6UCYBQTHp7w=",
-        "owner": "nix-community",
-        "repo": "NUR",
-        "rev": "d47dbf43ced4485a2b05eb3430e85358b43f8dd1",
+        "lastModified": 1739138025,
+        "narHash": "sha256-M4ilIfGxzbBZuURokv24aqJTbdjPA9K+DtKUzrJaES4=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "b2243f41e860ac85c0b446eadc6930359b294e79",
         "type": "github"
       },
       "original": {
-        "owner": "nix-community",
-        "repo": "NUR",
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nur-packages": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1739403827,
+        "narHash": "sha256-PW5NXJfgwZ17W+El6px+mWtpUFWjshJhOhWInYIqOWE=",
+        "owner": "lykos153",
+        "repo": "nur-packages",
+        "rev": "12e18b51ef03a7c82b8f2079345ace956e43eb99",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lykos153",
+        "repo": "nur-packages",
         "type": "github"
       }
     },
@@ -71,7 +90,7 @@
       "inputs": {
         "flake-parts": "flake-parts",
         "nixpkgs": "nixpkgs",
-        "nur": "nur"
+        "nur-packages": "nur-packages"
       }
     }
   },
